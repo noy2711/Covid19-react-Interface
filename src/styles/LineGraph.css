@@ -1,0 +1,12 @@
+.graph{
+    border: 2px solid rgb(131, 131, 131);
+    border-radius: 10%;
+    background-color: rgba(243, 241, 241, 0.938);
+    padding-bottom: 30px;
+
+}
+.title{
+    text-align: center;
+    color: rgb(71, 71, 71);
+
+}
