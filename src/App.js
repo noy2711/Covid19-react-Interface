@@ -10,7 +10,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { blueGrey, grey, lightBlue, red, blue } from '@material-ui/core/colors';
 import { getCovidData } from "./API/api";
-import ChartSlider from './components/chartSlider';
 
 export var ptr = null
 export default class App extends Component {
@@ -22,7 +21,6 @@ export default class App extends Component {
       countries: [],
       world: [],
       flag: false,
-      pointer: ""
     }
     document.title = "noy website"
   }
@@ -33,7 +31,7 @@ export default class App extends Component {
         this.setState({ countries: res })
       }
     ).then(
-      // TODO: preproccess data + add location
+        // TODO: preproccess data + add location
     )
 
     await getCovidData("all", "world").then(
@@ -103,7 +101,7 @@ export default class App extends Component {
 
 
 
-          {ToggleMapChart(this.state.flag)}
+          {ToggleMapChart(this.state.flag, this.state.countries, this.state.world)}
 
 
         </div>
@@ -114,7 +112,8 @@ export default class App extends Component {
   }
 }
 
-function ToggleMapChart(isMap) {
+function ToggleMapChart(isMap, countries, world) {
+  
   if (isMap) {
     return (
 
@@ -131,14 +130,21 @@ function ToggleMapChart(isMap) {
   } else {
     // Add data: active, death, recovered, labels
     
-    return (
-      <div>
-        <LineGraph />
-
-        <ChartSlider />
-
-      </div>
-    )
+    if (world.length != 0) {
+      console.log("app world: ", world);
+      return (
+        <div>
+          <LineGraph countries = {countries} world = {world}/>
+  
+        </div>
+      )
+    } else {
+      return (
+        <div>  
+        </div>
+      )
+    }
+    
 
   }
 }

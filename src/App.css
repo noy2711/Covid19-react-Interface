@@ -72,10 +72,6 @@ html {
   }
 }
 
-
-/*body{
-}*/
-
 .App {
   text-align: center;
 }
@@ -107,6 +103,7 @@ html {
 }
 .noglow{
   color: #fff;
+  text-shadow: 7px 5px 10px black;
   text-align: center;
 }
 .glow {
@@ -114,6 +111,7 @@ html {
   text-align: center;
   animation: glow 1s ease-in-out infinite alternate;
 }
+
 
 @keyframes glow {
   from {
