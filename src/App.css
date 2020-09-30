@@ -102,23 +102,46 @@ html {
 
 }
 .noglow{
-  color: #fff;
+  color: rgba(230, 238, 245, 0.788);
   text-shadow: 7px 5px 10px black;
   text-align: center;
 }
-.glow {
-  color: #fff;
+.glowGlobe {
+  color: rgba(173, 224, 176, 0.712);
   text-align: center;
-  animation: glow 1s ease-in-out infinite alternate;
+  border-radius: 50%;
+  background-color: rgba(89, 137, 182, 0.795);
+  animation: glowGlobe 2s ease-in-out infinite alternate;
+}
+
+.glowChart {
+  color: rgba(173, 224, 176, 0.733);
+  text-align: center;
+  animation: glowChart 2s ease-in-out infinite alternate;
 }
 
 
-@keyframes glow {
+@keyframes glowGlobe {
   from {
-    text-shadow: 0 0 10px #fff, 0 0 20px rgb(181, 186, 202), 0 0 30px #5f646e, 0 0 40px #5f646e;
+    box-shadow: 0 0 10px #fff, 0 0 20px rgb(162, 167, 182), 0 0 30px #5a6375;
+    transform: rotate(-360deg);
   }
   to {
-    text-shadow: 0 0 20px rgb(96, 158, 250), 0 0 30px #3480f1, 0 0 40px #1a6ff0;
+    box-shadow: 0 0 20px rgb(96, 158, 250), 0 0 30px #84a8df;
+    transform: rotate(0);
+  }
+}
+
+@keyframes glowChart {
+  from {
+    box-shadow: 0 0 10px #fff, 0 0 20px rgb(162, 167, 182), 0 0 30px #5a6375;
+    border-radius: 25%;
+    background-color: rgba(101, 149, 194, 0.795);
+  }
+  to {
+    box-shadow: 0 0 20px rgb(96, 158, 250), 0 0 30px #84a8df;
+    border-radius: 35%;
+    background-color: rgba(155, 191, 202, 0.767);
   }
 }
 .App-header {

@@ -10,6 +10,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { blueGrey, grey, lightBlue, red, blue } from '@material-ui/core/colors';
 import { getCovidData } from "./API/api";
+import {Globe} from '@styled-icons/entypo'
+import {ChartArea} from '@styled-icons/fa-solid'
+import {LineChart} from '@styled-icons/remix-line'
 
 export var ptr = null
 export default class App extends Component {
@@ -20,9 +23,9 @@ export default class App extends Component {
     this.state = {
       countries: [],
       world: [],
-      flag: false,
+      flag: true,
     }
-    document.title = "noy website"
+    document.title = "Covid19 Worldwide"
   }
 
   async componentDidMount() {
@@ -39,8 +42,6 @@ export default class App extends Component {
         this.setState({ world: res })
       }
     )
-
-
   }
 
   render() {
@@ -48,24 +49,24 @@ export default class App extends Component {
     // put this in a seperate file
     const AntSwitch = withStyles((theme) => ({
       root: {
-        width: 60,
-        height: 20,
+        width: 70,
+        height: 22,
         padding: 2.2,
         display: 'flex',
       },
       switchBase: {
-        padding: 3,
+        padding: 2,
         color: this.state.flag ? lightBlue[700] : grey[300],
-        transform: this.state.flag ? 'translateX(-1px)' : 'translateX(40px)',
+        transform: this.state.flag ? 'translateX(-1px)' : 'translateX(48px)',
       },
       thumb: {
-        width: 16,
-        height: 16,
+        width: 20,
+        height: 20,
         boxShadow: 'none',
       },
       track: {
         border: this.state.flag ? `1px solid ${theme.palette.grey[800]}` : `1px solid ${theme.palette.grey[200]}`,
-        borderRadius: 15 / 2,
+        borderRadius: 16 / 2,
         opacity: 1,
         backgroundColor: this.state.flag ? grey[300] : lightBlue[700],
       },
@@ -80,21 +81,22 @@ export default class App extends Component {
         <div id='stars2'></div>
         <div id='stars3'></div>
 
-
-
-
         <div className="mapStatContainer">
           <Typography component="div">
             <Grid component="label" container alignItems="center" spacing={1}>
 
 
-              <Grid item className={this.state.flag ? "glow" : "noglow"}>World Map</Grid>
+              <Grid item  >
+                <Globe className={this.state.flag ? "glowGlobe" : "noglow"} size="40" />
+              </Grid>
 
               <Grid item>
                 <AntSwitch onChange={() => this.setState({ flag: !this.state.flag })} name="checkedC" />
               </Grid>
 
-              <Grid item className={!this.state.flag ? "glow" : "noglow"}>Chart</Grid>
+              <Grid item >
+                <LineChart  className={!this.state.flag ? "glowChart" : "noglow"} size="37"/>
+              </Grid>
 
             </Grid>
           </Typography>

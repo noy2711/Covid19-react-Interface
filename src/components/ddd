@@ -1,0 +1,9 @@
+ /*const d = data.find((s) => s.iso3 === geo.properties.ISO_A3);
+                        return (
+                        <Geography
+                            key={geo.rsmKey}
+                            geography={geo}
+                            fill={d ? colorScale(5 * d.cases / d.population) : "#F5F4F6"} />
+                                );
+                            })}
+                        }

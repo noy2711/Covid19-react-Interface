@@ -15,7 +15,7 @@ export default class LineGraph extends Component {
         super(props)
         var i = 100
         var f = 200
-        const allCountries = ['Pick a country', 'World'].concat(getCountriesList(this.props.countries))
+        const allCountries = ['Choose a country', 'World'].concat(getCountriesList(this.props.countries))
         const labelsData = getDateRange(this.props.world.cases)
         allLabels = labelsData
         const opa = 0.2
@@ -180,7 +180,7 @@ export default class LineGraph extends Component {
                         }}
                         id="controllable-states"
                         options={this.state.allCountries}
-                        style={{ width: 200 }}
+                        style={{ width: 250 }}
 
                         renderInput={(params) => <TextField {...params}
                             size="small"

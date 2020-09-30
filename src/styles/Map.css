@@ -11,12 +11,12 @@
 .map {
  
     height: 1000px;
-    background-color: white;
-    border:2px solid white;
-    border-radius: 20px;
-    margin-top: 1%;
+    /*background-color: white;*/
+    border-radius: 5%;
+    margin-top: -10px;
     margin-bottom: 1%;
     box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+    padding-bottom: 200px;
   }
  
   .map .leaflet-container {
