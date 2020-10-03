@@ -13,12 +13,10 @@ class StatusButtons extends Component {
         }
     }
 
-    onBtnPress = (status) => {
-        console.log(status);
-    }
+  
 
     btnPress = (status, color) => {
-        this.onBtnPress(status)
+        this.props.onBtnPress(status)
         const press = {
             boxShadow: `inset 0 50px 0 0 ${color}`,
             color: "white",
@@ -55,7 +53,7 @@ class StatusButtons extends Component {
                     activeStyle: activeUnPress
                 })
                 break;
-            case "active":
+            case "cases":
                 this.setState({
                     deathStyle: deathUnPress,
                     recoveredStyle: recoverUnPress,
@@ -75,7 +73,7 @@ class StatusButtons extends Component {
             </div>
 
             <div id="activeBtn"
-                onClick={() => { this.btnPress("active", "orange") }}
+                onClick={() => { this.btnPress("cases", "orange") }}
                 style={this.state.activeStyle}
             >
                 <div className="text">Active</div>

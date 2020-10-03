@@ -12,7 +12,7 @@ import StatsBox from './components/StatsBox'
 ReactDOM.render(
  
   
-  <Box/>
+  <App/>
 
 ,
   document.getElementById('root')

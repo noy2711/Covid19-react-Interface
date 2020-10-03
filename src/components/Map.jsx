@@ -5,13 +5,23 @@ import { Circle, Popup } from "react-leaflet";
 import { getCovidData, getCountriesInfos, getWorldData, getCountries, getCountryData } from "../API/api";
 import moment from "moment"
 import MapGlobe from './MapGlobe'
+import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import '../styles/StatusButtons.css'
+import StatusButtons from './StatusButtons'
+import 'fontsource-roboto';
+import Typography from '@material-ui/core/Typography';
+
 export default class WorldMap extends Component {
     constructor(props) {
+    
         super(props)
 
         this.state = {
             data: [],
-            date: moment(new Date("1/22/20")).format("M/D/YY")
+            date: moment(new Date("1/22/20")).format("M/D/YY"),
+            maxRatio: 1,
+            content: "",
+            status: "deaths"
         }
         document.title = "noy website"
     }
@@ -104,6 +114,11 @@ export default class WorldMap extends Component {
             default:
                 return key;
         }
+
+    }
+
+    onBtnPress = (status) => {
+        this.setState({status: status})
     }
 
     async componentDidMount() {
@@ -141,7 +156,6 @@ export default class WorldMap extends Component {
 
 
 
-            console.log("Hash: ", x);
             return x
         })
 
@@ -159,15 +173,20 @@ export default class WorldMap extends Component {
 
 
         const hash = Object.assign({}, ...info.map(s => ({ [s.code]: s })));
+        var allDates = []
         var rawData = await getCovidData("all")
             .then(y => {
 
                 return y.filter(x => {
-                    return x.country != "Diamond Princess" && x.country != "MS Zaandam" &&
-                        !(x.country == "UK" && x.province != null);
+                    return x.country != "Diamond Princess" && x.country != "MS Zaandam"
                 })
             })
+            .then(x => {
+                allDates = getDates(x[0].timeline.cases)
+                return fixProvience(x)
+            })
             .then(data => {
+
                 return data.map(x => {
                     const cntryName = String(x.country).trim()
 
@@ -181,7 +200,7 @@ export default class WorldMap extends Component {
                             area: hash[cntryName].area,
                             lat: hash[cntryName].latlng[0],
                             lng: hash[cntryName].latlng[1],
-                            iso3:hash[cntryName].iso3
+                            iso3: hash[cntryName].iso3
                             //radius: Math.sqrt(hash[x.country].area) * 50000 * x.Active / hash[x.country].population
                         }
                     }
@@ -189,25 +208,22 @@ export default class WorldMap extends Component {
 
                 })
 
-            }).then(x => {
-                console.log(x);
-                return x
             })
 
 
         var dataByDate = new Map()
-        Object.entries(rawData[0].timeline.cases).forEach(x => {
-            dataByDate.set(x[0], [])
+        allDates.forEach(x => {
+            dataByDate.set(x, [])
         })
 
-        this.d = new Date(getDates(rawData[0].timeline.cases)[0])
+        this.d = new Date(allDates[0])
+
 
         rawData.forEach(cntry => {
 
-            const cases = getPureData(cntry.timeline.cases)
-            const deaths = getPureData(cntry.timeline.deaths)
-            const recovered = getPureData(cntry.timeline.recovered)
-            const dates = getDates(cntry.timeline.cases)
+            const cases = cntry.timeline.cases
+            const deaths = cntry.timeline.deaths
+            const recovered = cntry.timeline.recovered
 
             for (let i = 0; i < cases.length; i++) {
                 const data = {
@@ -225,40 +241,54 @@ export default class WorldMap extends Component {
                     radRecovered: Math.sqrt(cntry.area) * 50000 * recovered[i] / cntry.population,
 
                 }
-                dataByDate.get(dates[i]).push(data)
+                dataByDate.get(allDates[i]).push(data)
 
             }
 
         });
-        /*
-                console.log("Final Data:", dataByDate);
-                var interval = setInterval(() => {
-                    console.log("intervaling...");
-                    const dateSimple = moment(this.nextDate()).format("M/D/YY")
-                    if (dataByDate.has(dateSimple)) {
-                        console.log("Data entry:", dataByDate.get(dateSimple));
-                        this.setState({
-                            data: dataByDate.get(dateSimple),
-                            date: dateSimple + ""
-                        })
-                    } else {
-                        console.log(dateSimple, "not found");
-                    }
-                    if (this.d >= new Date()) {
-                        console.log("intervaling existing...");
-                        window.clearInterval(interval);
-                    }
-                }, 100)
-        */
 
+
+        var interval = setInterval(() => {
+            console.log("intervaling...");
+            const dateSimple = moment(this.nextDate()).format("M/D/YY")
+            if (dataByDate.has(dateSimple)) {
+                this.setState({
+                    data: dataByDate.get(dateSimple),
+                    date: dateSimple + ""
+                })
+            } else {
+                console.log(dateSimple, "not found");
+            }
+            if (this.d >= new Date()) {
+                console.log("intervaling existing...");
+                window.clearInterval(interval);
+            }
+        }, 100)
+
+
+        /*
+        // get to day number 150 [0, 250]
+        for (let i = 0; i < 250; i++) {
+            this.nextDate()
+        }
         const dateSimple = moment(this.nextDate()).format("M/D/YY")
         if (dataByDate.has(dateSimple)) {
-            console.log("Data entry:", dataByDate.get(dateSimple));
+            const dd = dataByDate.get(dateSimple)
+            var maxRatio = 0
+            dd.forEach(element => {
+                var ratio = element.cases / element.population;
+                if (ratio > maxRatio)
+                    maxRatio = ratio
+            });
+
             this.setState({
-                data: dataByDate.get(dateSimple),
-                date: dateSimple + ""
+                data: dd,
+                date: dateSimple + "",
+                maxRatio: maxRatio,
             })
+        
         }
+        */
 
     }
 
@@ -267,19 +297,30 @@ export default class WorldMap extends Component {
         height: window.innerHeight * 60 / 100
     }
 
+    setTooltip = (x) => {
+        this.setState({
+            content: x
+        })
+    }
 
     render() {
-        console.log("...." , this.state.data)
+
         return (
+
             <div className="container">
 
                 <div className="map"
                     style={this.size}
                 >
-                    <h3 className="mapTitle">{this.state.date}</h3>
+                    <StatusButtons onBtnPress = {this.onBtnPress}/>
 
-                    <MapGlobe data = {this.state.data}/>
+                    <h4 className="mapTitle">
+                        {this.state.date}
+                    </h4>
 
+                    <TooltipComponent cssClass="tooltip-box" content={this.state.content} mouseTrail={true} showTipPointer={false}>
+                        <MapGlobe func={this.setTooltip} data={this.state.data} ratio={this.state.maxRatio} status= {this.state.status}/>
+                    </TooltipComponent>
 
 
                 </div>
@@ -366,4 +407,87 @@ function getDates(data) {
         arr.push(x[0])
     })
     return arr
+}
+
+function fixProvience(arr) {
+
+    var res = []
+
+    // convert cases,... to pure values
+    arr = arr.map(x => {
+        return {
+            country: x.country,
+            province: x.province,
+            timeline: {
+                cases: getPureData(x.timeline.cases),
+                deaths: getPureData(x.timeline.deaths),
+                recovered: getPureData(x.timeline.recovered),
+            }
+        }
+    })
+
+    // make array of country names that have duplicates
+    var d = new Map()
+    arr.forEach(x => {
+        if (d.has(x.country)) {
+            d.set(x.country, 2)
+        } else {
+            d.set(x.country, 1)
+        }
+    });
+    console.log("d:", d);
+    console.log("arr: ", arr);
+
+    d.forEach((v, k) => {
+        const cntryName = k;
+        const dupCnt = v
+        // is not dup
+        if (dupCnt == 1) {
+            // just add to res
+            res.push(arr.find(x => x.country == cntryName))
+        }
+        // is dup
+        else {
+            // if provinces = null <=> if any(provinces = null)
+            if (arr.some(x => x.province == null && x.country == cntryName)) {
+                // add only to res list
+                res.push(arr.find(x => x.country == cntryName && x.province == null))
+
+                // if provinces != null <=> if all(province != null)
+            } else {
+                const len = arr[0].timeline.cases.length
+                // sum of all cases, deaths, recovered
+                var cases = new Array(len).fill(0);
+                var deaths = new Array(len).fill(0);
+                var recovered = new Array(len).fill(0);
+
+                // get all entrys with country name = countryName
+                var tmpCountries = arr.filter(x => x.country == cntryName)
+
+                // loop on all and make sums
+                tmpCountries.forEach(prov => {
+                    for (let i = 0; i < prov.timeline.cases.length; i++) {
+                        cases[i] += prov.timeline.cases[i];
+                        deaths[i] += prov.timeline.deaths[i];
+                        recovered[i] += prov.timeline.recovered[i];
+                    }
+                });
+
+                // build new object then add it to res list
+                const countryObject = {
+                    country: cntryName,
+                    timeline: {
+                        cases: cases,
+                        deaths: deaths,
+                        recovered: recovered,
+                    }
+                }
+
+                res.push(countryObject)
+
+            }
+        }
+    });
+
+    return res
 }
