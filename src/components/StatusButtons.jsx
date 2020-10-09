@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/StatusButtons.css'
+import {rounded} from "../Utils/NumbersUtil"
 
 class StatusButtons extends Component {
     style = {}
@@ -69,21 +70,23 @@ class StatusButtons extends Component {
                 onClick={() => { this.btnPress("deaths", "#db3c3c") }}
                 style={this.state.deathStyle}
             >
-                <div className="text">Deaths</div>
+
+                <div className="text">Deaths <br/><span className="counter">{rounded(this.props.worldCount.deaths)}</span></div>
+
             </div>
 
             <div id="activeBtn"
                 onClick={() => { this.btnPress("cases", "orange") }}
                 style={this.state.activeStyle}
             >
-                <div className="text">Active</div>
+                <div className="text">Active<br/><span className="counter">{rounded(this.props.worldCount.cases)}</span></div>
             </div>
 
             <div id="recoveredBtn"
                 onClick={() => { this.btnPress("recovered", "rgb(64, 185, 64)") }}
                 style={this.state.recoveredStyle}
             >
-                <div className="text">Recovered</div>
+                <div className="text">Recovered<br/><span className="counter">{rounded(this.props.worldCount.recovered)}</span></div>
             </div>
         </div >
 

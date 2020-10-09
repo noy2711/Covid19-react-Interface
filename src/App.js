@@ -1,6 +1,5 @@
 import React, { useEffect, useState, Component } from 'react';
 import './App.css';
-import StatsBox from './components/StatsBox';
 import WorldMap from './components/Map';
 import DatesSlider from './components/DatesSlider';
 import LineGraph from './components/LineGraph'
@@ -125,7 +124,6 @@ function ToggleMapChart(isMap, countries, world) {
           center={{ lat: 34.80746, lng: -40.4796 }}
           zoom={2}
         />
-        <StatsBox />
       </div>
 
     )

@@ -113,19 +113,28 @@ export default class LineGraph extends Component {
 
             const i = val[0]
             const f = val[1]
-            console.log("i: ", i, "f: ", f);
-            this.state.graphData.labels = getDateRange(this.props.world.cases).slice(i, f)
-            this.state.graphData.datasets[2].data = getValues(this.props.world.cases, i, f)
-            this.state.graphData.datasets[1].data = getValues(this.props.world.deaths, i, f)
-            this.state.graphData.datasets[0].data = getValues(this.props.world.recovered, i, f)
 
+            var cnt = null
+            if (this.state.value == null)
+                return
+            if (this.state.value == "World") {
+                cnt = this.props.world
+            } else {
+                cnt = getCountryData(this.props.countries, this.state.value)
+            }
+            this.state.graphData.labels = getDateRange(cnt.cases).slice(i, f)
 
+            this.state.graphData.datasets[2].data = getValues(cnt.cases, i, f)
+            this.state.graphData.datasets[1].data = getValues(cnt.deaths, i, f)
+            this.state.graphData.datasets[0].data = getValues(cnt.recovered, i, f)
             this.setState({
                 graphData: this.state.graphData,
                 start: i,
-                end: f
-
+                end: f,
             })
+
+
+
 
 
 
@@ -167,13 +176,14 @@ export default class LineGraph extends Component {
                             this.state.graphData.datasets[1].data = getValues(cnt.deaths, i, f)
                             this.state.graphData.datasets[0].data = getValues(cnt.recovered, i, f)
                             this.setState({
-                                graphData: this.state.graphData
+                                graphData: this.state.graphData,
+                                value: newValue,
                             })
                         }}
 
                         inputValue={this.state.inputValue}
                         onInputChange={(event, newInputValue) => {
-                            
+
                             this.setState({
                                 inputValue: newInputValue
                             })
@@ -218,6 +228,7 @@ function getCountriesList(countries) {
 }
 function getCountryData(data, cntry) {
 
+    console.log("User181:",data);
     for (let i = 0; i < data.length; i++) {
         const c = data[i];
         if (c.country == cntry)

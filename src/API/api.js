@@ -58,7 +58,7 @@ export const getCountriesInfos = async () => {
         console.log(error);
     }
 }
-
+// 
 export const getCovidData = async (lastDays, cntry = "null") => {
     cntry = String(cntry)
     var url = ""

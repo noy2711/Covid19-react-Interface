@@ -10,7 +10,7 @@ import {
     Graticule,
 
 } from "react-simple-maps";
-
+import { rounded } from "../Utils/NumbersUtil"
 import '../styles/MapGlobe.css'
 class MapGlobe extends Component {
     constructor(props) {
@@ -27,23 +27,26 @@ class MapGlobe extends Component {
             .range(["#fff", "rgba(6, 255, 110, 0.767)"]);
         this.colorScales = [csCases, csDeaths, csRecovered]
         this.content = ""
+        this.state = { 
+            width: window.innerWidth ,
+            height: window.innerHeight
+        }
     }
     geoUrl =
         "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 
+    updateDimensions = () => {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    };
+    componentDidMount() {
+        window.addEventListener('resize', this.updateDimensions);
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions);
+    }
     render() {
 
 
-        const rounded = num => {
-            if (num > 1000000000) {
-                return Math.round(num / 100000000) / 10 + "Bn";
-            } else if (num > 1000000) {
-                return Math.round(num / 100000) / 10 + "M";
-            } else if (num > 1000) {
-                return Math.round(num / 100) / 10 + "K";
-            } else
-                return Math.round(num)
-        };
 
 
         const displayNumber = (d) => {
@@ -65,7 +68,7 @@ class MapGlobe extends Component {
         var data = this.props.data
         if (data.length > 0)
             return (
-                <ComposableMap data-tip="registerTip" data-for="registerTip" className="globeContainer"
+                <ComposableMap width={1000000 / (this.state.width * 0.9)} data-tip="registerTip" data-for="registerTip" className="globeContainer"
                     projectionConfig={{
                         rotate: [-10, 0, 0],
                         scale: 147,

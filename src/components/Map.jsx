@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 
 export default class WorldMap extends Component {
     constructor(props) {
-    
+
         super(props)
 
         this.state = {
@@ -21,7 +21,10 @@ export default class WorldMap extends Component {
             date: moment(new Date("1/22/20")).format("M/D/YY"),
             maxRatio: 1,
             content: "",
-            status: "deaths"
+            status: "deaths",
+            worldData: [],
+            width: window.innerWidth,
+            height: window.innerHeight
         }
         document.title = "noy website"
     }
@@ -118,13 +121,20 @@ export default class WorldMap extends Component {
     }
 
     onBtnPress = (status) => {
-        this.setState({status: status})
+        this.setState({ status: status })
+    }
+
+    updateDimensions = () => {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions);
     }
 
     async componentDidMount() {
 
-
-
+        window.addEventListener('resize', this.updateDimensions);
         var info = await getCountriesInfos().then(y => {
             return y.map(x => {
 
@@ -246,6 +256,40 @@ export default class WorldMap extends Component {
             }
 
         });
+        var worldData = await getCovidData("all", "world")
+
+
+        //2. key = dates, value {death:num, cases:num, recovered:num}
+
+        // from -> {cases: {[date:val]}, deaths: {…}, recovered: {…}}
+
+
+
+        // 1. get pure values of deaths, cases, recovered -> getPureData
+        // 2. get keys = array of dates -> getDates
+        // 3. loop on dates -> add to wordDataByDate
+
+
+
+        var worldDataByDate = new Map()
+        var wdDeaths = getPureData(worldData.deaths)
+        var wdCases = getPureData(worldData.cases)
+        var wdRecovered = getPureData(worldData.recovered)
+        var wdDates = getDates(worldData.cases)
+
+
+        for (let i = 0; i < wdDates.length; i++) {
+            const date = moment(wdDates[i]).format("M/D/YY")
+            // {key: date, val: { cases:num, death:num, recovered:num}}
+            worldDataByDate.set(date, {
+                cases: wdCases[i],
+                deaths: wdDeaths[i],
+                recovered: wdRecovered[i]
+            })
+
+        }
+        console.log("data by date:", worldDataByDate);
+
 
 
         var interval = setInterval(() => {
@@ -254,7 +298,8 @@ export default class WorldMap extends Component {
             if (dataByDate.has(dateSimple)) {
                 this.setState({
                     data: dataByDate.get(dateSimple),
-                    date: dateSimple + ""
+                    date: dateSimple + "",
+                    worldData: worldDataByDate.get(dateSimple)
                 })
             } else {
                 console.log(dateSimple, "not found");
@@ -307,19 +352,23 @@ export default class WorldMap extends Component {
 
         return (
 
-            <div className="container">
+            <div className="container" style={{ width: this.state.width * 0.9 }}>
+
+                <StatusButtons
+                    onBtnPress={this.onBtnPress}
+                    worldCount={this.state.worldData}
+                />
 
                 <div className="map"
                     style={this.size}
                 >
-                    <StatusButtons onBtnPress = {this.onBtnPress}/>
 
                     <h4 className="mapTitle">
                         {this.state.date}
                     </h4>
 
                     <TooltipComponent cssClass="tooltip-box" content={this.state.content} mouseTrail={true} showTipPointer={false}>
-                        <MapGlobe func={this.setTooltip} data={this.state.data} ratio={this.state.maxRatio} status= {this.state.status}/>
+                        <MapGlobe func={this.setTooltip} data={this.state.data} ratio={this.state.maxRatio} status={this.state.status} />
                     </TooltipComponent>
 
 

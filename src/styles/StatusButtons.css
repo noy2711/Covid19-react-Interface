@@ -1,11 +1,11 @@
 .StatusBtns {
-    height: 40px;
+    height: 50px;
     width: 400px;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
     margin: auto;
-    margin-bottom: 5%;
+    margin-bottom: 7%;
     margin-top: 5%;
 
 }
@@ -14,18 +14,21 @@
     flex: 1 1 30%;
     position: relative;
     transition: 0.5s;
-    box-shadow: inset 0 40px 0 0 white;
+    box-shadow: inset 0 50px 0 0 white;
     border: 2px solid red;
     color: red;
     border-radius: 5%;
 }
 
 #deathBtn .text {
+    text-align: center;
     margin: 0;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: 650;
 }
 
 #deathBtn:hover, #deathBtn:focus {
@@ -46,11 +49,19 @@
 }
 
 #activeBtn .text {
+    text-align: center;
     margin: 0;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: 650;
+}
+
+.counter {
+    font-size: 13px;
+    font-weight: 400;
 }
 
 #activeBtn:hover, #activeBtn:focus {
@@ -71,11 +82,14 @@
 }
 
 #recoveredBtn .text {
+    text-align: center;
     margin: 0;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: 650;
 }
 
 #recoveredBtn:hover, #recoveredBtn:focus {

@@ -8,7 +8,6 @@ import Box2 from './components/box2';
 import LineGraph from './components/LineGraph'
 import WorldMap from './components/Map'
 import * as serviceWorker from './serviceWorker';
-import StatsBox from './components/StatsBox'
 ReactDOM.render(
  
   
