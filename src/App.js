@@ -43,6 +43,14 @@ export default class App extends Component {
     )
   }
 
+  onSliderChange = (dateInx, isAnimStopped) => {
+    console.log("onSliderChange", dateInx);
+  }
+
+  onTimelineChange = (dateInx) => {
+    console.log("onTimelineChange", dateInx);
+  }
+
   render() {
 
     // put this in a seperate file
@@ -102,7 +110,7 @@ export default class App extends Component {
 
 
 
-          {ToggleMapChart(this.state.flag, this.state.countries, this.state.world)}
+          {ToggleMapChart(this.state.flag, this.state.countries, this.state.world, this.onSliderChange)}
 
 
         </div>
@@ -113,16 +121,20 @@ export default class App extends Component {
   }
 }
 
-function ToggleMapChart(isMap, countries, world) {
+function ToggleMapChart(isMap, countries, world, onSliderChange, onTimelineChange, worldMapData) {
   
+  
+
   if (isMap) {
     return (
 
       <div>
-        <DatesSlider />
+        <DatesSlider onChange = {onSliderChange} />
         <WorldMap
           center={{ lat: 34.80746, lng: -40.4796 }}
           zoom={2}
+          onChange = {onTimelineChange}
+          data = {worldMapData}
         />
       </div>
 

@@ -67,6 +67,10 @@ class DatesSlider extends Component {
             },
         })(Slider);
 
+        const onSliderInnerChange = (event, value) => {
+            this.props.onChange(value, true)
+        }
+        
         return (
             <div className="contianer">
                 <IOSSlider
@@ -79,6 +83,7 @@ class DatesSlider extends Component {
                     max={end}
                     marks={marks}
                     valueLabelDisplay="on"
+                    onChange = {onSliderInnerChange}
                 />
             </div>
         );

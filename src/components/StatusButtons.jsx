@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/StatusButtons.css'
-import {rounded} from "../Utils/NumbersUtil"
+import { rounded } from "../Utils/NumbersUtil"
 
 class StatusButtons extends Component {
     style = {}
@@ -14,7 +14,9 @@ class StatusButtons extends Component {
         }
     }
 
-  
+    componentDidMount() {
+        this.btnPress("deaths", "#db3c3c")
+    }
 
     btnPress = (status, color) => {
         this.props.onBtnPress(status)
@@ -71,7 +73,7 @@ class StatusButtons extends Component {
                 style={this.state.deathStyle}
             >
 
-                <div className="text">Deaths <br/><span className="counter">{rounded(this.props.worldCount.deaths)}</span></div>
+                <div className="text">Deaths <br /><span className="counter">{rounded(this.props.worldCount.deaths)}</span></div>
 
             </div>
 
@@ -79,14 +81,14 @@ class StatusButtons extends Component {
                 onClick={() => { this.btnPress("cases", "orange") }}
                 style={this.state.activeStyle}
             >
-                <div className="text">Active<br/><span className="counter">{rounded(this.props.worldCount.cases)}</span></div>
+                <div className="text">Active<br /><span className="counter">{rounded(this.props.worldCount.cases)}</span></div>
             </div>
 
             <div id="recoveredBtn"
                 onClick={() => { this.btnPress("recovered", "rgb(64, 185, 64)") }}
                 style={this.state.recoveredStyle}
             >
-                <div className="text">Recovered<br/><span className="counter">{rounded(this.props.worldCount.recovered)}</span></div>
+                <div className="text">Recovered<br /><span className="counter">{rounded(this.props.worldCount.recovered)}</span></div>
             </div>
         </div >
 

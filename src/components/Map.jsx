@@ -3,6 +3,7 @@ import { Map as LeafletMap, TileLayer } from "react-leaflet";
 import "../styles/Map.css";
 import { Circle, Popup } from "react-leaflet";
 import { getCovidData, getCountriesInfos, getWorldData, getCountries, getCountryData } from "../API/api";
+import { getWorldDataByDate, getCountryDataByDate } from "../Utils/DataClean";
 import moment from "moment"
 import MapGlobe from './MapGlobe'
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
@@ -29,7 +30,7 @@ export default class WorldMap extends Component {
         document.title = "noy website"
     }
 
-    d = new Date()
+    d = new Date("1/22/20")
 
     makeCircle = (center, radius) => {
         return (
@@ -52,74 +53,6 @@ export default class WorldMap extends Component {
     }
 
 
-
-    fixMe = (key) => {
-        switch (key) {
-            case "Russian Federation":
-                return "Russia";
-
-            case "Bolivia (Plurinational State of)":
-                return "Bolivia"
-
-            case "Bosnia and Herzegovina":
-                return "Bosnia";
-
-            case "Myanmar":
-                return "Burma";
-
-            case "Congo (Democratic Republic of the)":
-                return "DRC";
-
-            case "Czech Republic":
-                return "Czechia";
-
-            case "Iran (Islamic Republic of)":
-                return "Iran";
-
-            case "Korea (Democratic People's Republic of)":
-                return "S. Korea";
-
-            case "Republic of Kosovo":
-                return "Kosovo";
-
-
-
-            case "Libya":
-                return "Libyan Arab Jamahiriya";
-
-
-            case "Moldova (Republic of)":
-                return "Moldova";
-
-
-            case "Tanzania, United Republic of":
-                return "Tanzania";
-
-            case "United States of America":
-                return "USA";
-
-            case "United Kingdom of Great Britain and Northern Ireland":
-                return "UK";
-
-
-            case "United Arab Emirates":
-                return "UAE";
-
-            case "Venezuela (Bolivarian Republic of)":
-                return "Venezuela";
-            case "Viet Nam":
-                return "Vietnam";
-
-
-            case "Palestine, State of":
-                return "West Bank and Gaza";
-
-            default:
-                return key;
-        }
-
-    }
-
     onBtnPress = (status) => {
         this.setState({ status: status })
     }
@@ -135,165 +68,35 @@ export default class WorldMap extends Component {
     async componentDidMount() {
 
         window.addEventListener('resize', this.updateDimensions);
-        var info = await getCountriesInfos().then(y => {
-            return y.map(x => {
-
-                return {
-                    code: this.fixMe(x.name),
-                    population: x.population,
-                    area: x.area,
-                    latlng: x.latlng,
-                    iso3: x.alpha3Code,
-                }
-            })
-        }).then(x => {
-
-            x.push({
-                code: "Macedonia",
-                population: 2077000,
-                area: 67000,
-                latlng: [41.67, 21.74],
-                iso3: "MKD"
-            })
-
-            x.push({
-                code: "Brunei",
-                population: 428962,
-                area: 5765,
-                latlng: [4.53, 114.72],
-                iso3: "BRN"
-            })
-
-
-
-            return x
-        })
 
 
 
 
-        /* info = info.map(x => {
-                    return {
-                        code: x.name,
-                        population: x.population,
-                        area: x.area
-                    }
-                }) */
+        var worldDataByDate = await getWorldDataByDate();
+        var dataByDate = await getCountryDataByDate();
 
+        if(this.props.flag == false)
+        {
+            this.d = this.props.date
+            this.props.onChange(this.d)
+            
+        }
 
-
-        const hash = Object.assign({}, ...info.map(s => ({ [s.code]: s })));
-        var allDates = []
-        var rawData = await getCovidData("all")
-            .then(y => {
-
-                return y.filter(x => {
-                    return x.country != "Diamond Princess" && x.country != "MS Zaandam"
-                })
-            })
-            .then(x => {
-                allDates = getDates(x[0].timeline.cases)
-                return fixProvience(x)
-            })
-            .then(data => {
-
-                return data.map(x => {
-                    const cntryName = String(x.country).trim()
-
-                    if (hash[cntryName] == null) {
-                        console.log(`${cntryName}.doesn't exists in hash`);
-                    } else {
-                        return {
-                            name: cntryName,
-                            timeline: x.timeline,
-                            population: hash[cntryName].population,
-                            area: hash[cntryName].area,
-                            lat: hash[cntryName].latlng[0],
-                            lng: hash[cntryName].latlng[1],
-                            iso3: hash[cntryName].iso3
-                            //radius: Math.sqrt(hash[x.country].area) * 50000 * x.Active / hash[x.country].population
-                        }
-                    }
-
-
-                })
-
-            })
-
-
-        var dataByDate = new Map()
-        allDates.forEach(x => {
-            dataByDate.set(x, [])
-        })
-
-        this.d = new Date(allDates[0])
-
-
-        rawData.forEach(cntry => {
-
-            const cases = cntry.timeline.cases
-            const deaths = cntry.timeline.deaths
-            const recovered = cntry.timeline.recovered
-
-            for (let i = 0; i < cases.length; i++) {
-                const data = {
-                    name: cntry.name,
-                    population: cntry.population,
-                    area: cntry.area,
-                    lat: cntry.lat,
-                    lng: cntry.lng,
-                    iso3: cntry.iso3,
-                    cases: cases[i],
-                    deaths: deaths[i],
-                    recovered: recovered[i],
-                    radCases: Math.sqrt(cntry.area) * 50000 * cases[i] / cntry.population,
-                    radDeaths: Math.sqrt(cntry.area) * 50000 * deaths[i] / cntry.population,
-                    radRecovered: Math.sqrt(cntry.area) * 50000 * recovered[i] / cntry.population,
-
-                }
-                dataByDate.get(allDates[i]).push(data)
-
-            }
-
-        });
-        var worldData = await getCovidData("all", "world")
-
-
-        //2. key = dates, value {death:num, cases:num, recovered:num}
-
-        // from -> {cases: {[date:val]}, deaths: {…}, recovered: {…}}
-
-
-
-        // 1. get pure values of deaths, cases, recovered -> getPureData
-        // 2. get keys = array of dates -> getDates
-        // 3. loop on dates -> add to wordDataByDate
-
-
-
-        var worldDataByDate = new Map()
-        var wdDeaths = getPureData(worldData.deaths)
-        var wdCases = getPureData(worldData.cases)
-        var wdRecovered = getPureData(worldData.recovered)
-        var wdDates = getDates(worldData.cases)
-
-
-        for (let i = 0; i < wdDates.length; i++) {
-            const date = moment(wdDates[i]).format("M/D/YY")
-            // {key: date, val: { cases:num, death:num, recovered:num}}
-            worldDataByDate.set(date, {
-                cases: wdCases[i],
-                deaths: wdDeaths[i],
-                recovered: wdRecovered[i]
-            })
+        var play = () => {
 
         }
-        console.log("data by date:", worldDataByDate);
-
+    
+        window.myStopFunc = () => {
+            console.log("map timinline stopped!!");
+        }
+        
 
 
         var interval = setInterval(() => {
             console.log("intervaling...");
+
+
+
             const dateSimple = moment(this.nextDate()).format("M/D/YY")
             if (dataByDate.has(dateSimple)) {
                 this.setState({
@@ -310,30 +113,6 @@ export default class WorldMap extends Component {
             }
         }, 100)
 
-
-        /*
-        // get to day number 150 [0, 250]
-        for (let i = 0; i < 250; i++) {
-            this.nextDate()
-        }
-        const dateSimple = moment(this.nextDate()).format("M/D/YY")
-        if (dataByDate.has(dateSimple)) {
-            const dd = dataByDate.get(dateSimple)
-            var maxRatio = 0
-            dd.forEach(element => {
-                var ratio = element.cases / element.population;
-                if (ratio > maxRatio)
-                    maxRatio = ratio
-            });
-
-            this.setState({
-                data: dd,
-                date: dateSimple + "",
-                maxRatio: maxRatio,
-            })
-        
-        }
-        */
 
     }
 
@@ -439,7 +218,7 @@ function remove(arr, toRemove) {
     return res
 }
 
-
+// 4. helper function 1
 function getPureData(data) {
 
     var arr = []
@@ -449,6 +228,7 @@ function getPureData(data) {
     return arr
 }
 
+// 4. helper function 2
 function getDates(data) {
 
     var arr = []
@@ -457,7 +237,7 @@ function getDates(data) {
     })
     return arr
 }
-
+// 4. helper function 3 => return the data that contain provience==null
 function fixProvience(arr) {
 
     var res = []
