@@ -68,7 +68,7 @@ class MapGlobe extends Component {
         var data = this.props.data
         if (data.length > 0)
             return (
-                <ComposableMap width={1000000 / (this.state.width * 0.9)} data-tip="registerTip" data-for="registerTip" className="globeContainer"
+                <ComposableMap width={this.state.width / 2.5} data-tip="registerTip" data-for="registerTip" className="globeContainer"
                     projectionConfig={{
                         rotate: [-10, 0, 0],
                         scale: 147,

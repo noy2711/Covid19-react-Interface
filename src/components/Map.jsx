@@ -117,8 +117,8 @@ export default class WorldMap extends Component {
     }
 
     size = {
-        width: window.innerWidth * 70 / 100,
-        height: window.innerHeight * 60 / 100
+        width: "50%",
+        height: "50%"
     }
 
     setTooltip = (x) => {
