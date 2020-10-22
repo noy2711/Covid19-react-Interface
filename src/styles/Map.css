@@ -4,16 +4,19 @@
   justify-content: center;
   flex-direction: column;
   margin: auto;
+  /* border: 2px solid red; */
+  height: 100%;
 }
 
 .mapTitle {
   margin: auto;
   text-align: center;
-  margin-bottom: 7%;
+  color: white;
+  /* margin-bottom: 7%; */
 }
 
 .map {
-  height: 1000px;
+  /* height: 1000px; */
   border-radius: 5%;
   margin-top: -5%;
   margin-bottom: 5%;

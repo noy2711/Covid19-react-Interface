@@ -20,6 +20,8 @@ export default class LineGraph extends Component {
         allLabels = labelsData
         const opa = 0.2
         this.state = {
+            width: window.innerWidth,
+            height: window.innerHeight,
             allCountries: allCountries,
             value: allCountries[0],
             inputValue: allCountries[0],
@@ -102,6 +104,12 @@ export default class LineGraph extends Component {
 
     componentDidMount() {
 
+        window.addEventListener('resize', () => {
+            this.setState({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            })
+        }, true);
     }
 
 
@@ -155,52 +163,12 @@ export default class LineGraph extends Component {
                     />
                 </div>
                 <div className='graph'>
-                    <Autocomplete
-                        className="autoc"
-                        value={this.state.value}
-                        onChange={(event, newValue) => {
-                            const i = this.state.start
-                            const f = this.state.end
-                            var cnt = []
-                            console.log("newValue: ", newValue);
-                            if (newValue == null)
-                                return
-                            if (newValue == "World") {
-                                cnt = this.props.world
-                                console.log("World");
-                            } else {
-                                cnt = getCountryData(this.props.countries, newValue)
-                                console.log("cntry");
-                            }
-                            this.state.graphData.datasets[2].data = getValues(cnt.cases, i, f)
-                            this.state.graphData.datasets[1].data = getValues(cnt.deaths, i, f)
-                            this.state.graphData.datasets[0].data = getValues(cnt.recovered, i, f)
-                            this.setState({
-                                graphData: this.state.graphData,
-                                value: newValue,
-                            })
-                        }}
-
-                        inputValue={this.state.inputValue}
-                        onInputChange={(event, newInputValue) => {
-
-                            this.setState({
-                                inputValue: newInputValue
-                            })
-                        }}
-                        id="controllable-states"
-                        options={this.state.allCountries}
-                        style={{ width: 250 }}
-
-                        renderInput={(params) => <TextField {...params}
-                            size="small"
-                            label="Countries"
-                            variant="outlined" />}
-                    />
-                    <Line data={this.state.graphData} width={800}
-                        height={250}
+                   
+                    <Line data={this.state.graphData}
+                        width={this.state.width * 0.6}
+                        height={this.state.height * 0.6}
                         animationEnabled="true"
-                        options={{ maintainAspectRatio: false }} />
+                        options={{ maintainAspectRatio: false}} />
                 </div>
             </div>
 
@@ -228,7 +196,7 @@ function getCountriesList(countries) {
 }
 function getCountryData(data, cntry) {
 
-    console.log("User181:",data);
+    console.log("User181:", data);
     for (let i = 0; i < data.length; i++) {
         const c = data[i];
         if (c.country == cntry)

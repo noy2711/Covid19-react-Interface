@@ -27,8 +27,8 @@ class MapGlobe extends Component {
             .range(["#fff", "rgba(6, 255, 110, 0.767)"]);
         this.colorScales = [csCases, csDeaths, csRecovered]
         this.content = ""
-        this.state = { 
-            width: window.innerWidth ,
+        this.state = {
+            width: window.innerWidth,
             height: window.innerHeight
         }
     }
@@ -65,13 +65,26 @@ class MapGlobe extends Component {
             }
         }
 
+
+        const resizableScale = () => {
+            let x = window.innerWidth;
+            if (x > 1750)
+                return 130
+            if (x > 1360)
+                return 100
+            if (x > 970)
+                return 70
+            return 50
+        }
+
         var data = this.props.data
         if (data.length > 0)
             return (
                 <ComposableMap width={this.state.width / 2.5} data-tip="registerTip" data-for="registerTip" className="globeContainer"
                     projectionConfig={{
                         rotate: [-10, 0, 0],
-                        scale: 147,
+                        scale: resizableScale(),
+
                     }}
                 >
 

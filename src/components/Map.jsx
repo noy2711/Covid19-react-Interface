@@ -11,6 +11,7 @@ import '../styles/StatusButtons.css'
 import StatusButtons from './StatusButtons'
 import 'fontsource-roboto';
 import Typography from '@material-ui/core/Typography';
+import ScreenInfo from "../shared/ScreenInfo";
 
 export default class WorldMap extends Component {
     constructor(props) {
@@ -133,6 +134,10 @@ export default class WorldMap extends Component {
 
             <div className="container" style={{ width: this.state.width * 0.9 }}>
 
+                {/* <ScreenInfo/> */}
+                <h3 className="mapTitle">
+                        {this.state.date}
+                    </h3>
                 <StatusButtons
                     onBtnPress={this.onBtnPress}
                     worldCount={this.state.worldData}
@@ -142,9 +147,7 @@ export default class WorldMap extends Component {
                     style={this.size}
                 >
 
-                    <h4 className="mapTitle">
-                        {this.state.date}
-                    </h4>
+                    
 
                     <TooltipComponent cssClass="tooltip-box" content={this.state.content} mouseTrail={true} showTipPointer={false}>
                         <MapGlobe func={this.setTooltip} data={this.state.data} ratio={this.state.maxRatio} status={this.state.status} />
