@@ -164,9 +164,53 @@ export default class LineGraph extends Component {
                 </div>
                 <div className='graph'>
                    
+
+                <Autocomplete
+                        className="autoc"
+                        value={this.state.value}
+                        onChange={(event, newValue) => {
+                            const i = this.state.start
+                            const f = this.state.end
+                            var cnt = []
+                            console.log("newValue: ", newValue);
+                            if (newValue == null)
+                                return
+                            if (newValue == "World") {
+                                cnt = this.props.world
+                                console.log("World");
+                            } else {
+                                cnt = getCountryData(this.props.countries, newValue)
+                                console.log("cntry");
+                            }
+                            this.state.graphData.datasets[2].data = getValues(cnt.cases, i, f)
+                            this.state.graphData.datasets[1].data = getValues(cnt.deaths, i, f)
+                            this.state.graphData.datasets[0].data = getValues(cnt.recovered, i, f)
+                            this.setState({
+                                graphData: this.state.graphData,
+                                value: newValue,
+                            })
+                        }}
+                        // dd
+
+                        inputValue={this.state.inputValue}
+                        onInputChange={(event, newInputValue) => {
+
+                            this.setState({
+                                inputValue: newInputValue
+                            })
+                        }}
+                        id="controllable-states"
+                        options={this.state.allCountries}
+                        style={{ width: 250 }}
+
+                        renderInput={(params) => <TextField {...params}
+                            size="small"
+                            label="Countries"
+                            variant="outlined" />}
+                    />
                     <Line data={this.state.graphData}
-                        width={this.state.width * 0.6}
-                        height={this.state.height * 0.6}
+                        width={this.state.width * 0.7}
+                        height={this.state.height * 0.4}
                         animationEnabled="true"
                         options={{ maintainAspectRatio: false}} />
                 </div>
@@ -178,6 +222,7 @@ export default class LineGraph extends Component {
 
 function getValues(data, iInx, fInx) {
 
+    
     const arr = Object.entries(data).slice(iInx, fInx).map(x => {
         return x[1]
     })
@@ -203,6 +248,7 @@ function getCountryData(data, cntry) {
             return c.timeline
 
     }
+    console.error("ERR: country not found", cntry);
 }
 
 function getDateRange(data) {
